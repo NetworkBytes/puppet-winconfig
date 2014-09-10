@@ -1,0 +1,15 @@
+{
+  "name": "networkbytes-winconfig",
+  "version": "0.0.1",
+  "author": "networkbytes, original souldo",
+  "summary": "Configur Windows Server 2008/2012 Settings",
+  "license": "Apache 2.0",
+  "source": "https://github.com/NetworkBytes/puppet-winconfig",
+  "project_page": "https://github.com/NetworkBytes/puppet-winconfig",
+  "issues_url": "https://github.com/NetworkBytes/puppet-winconfig/issues",
+  "description": "Configure Windows Server 2008/2012 Settings\n    includes UAC, IE ESC, Remote Desktop, Proxy Settings, Search Domains and more...",
+  "dependencies": [
+    {"name":"puppetlabs/registry","version_requirement":"1.0.0"},
+    {"name":"joshcooper/powershell","version_requirement":"0.0.6"}
+  ]
+}
