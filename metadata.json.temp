@@ -9,7 +9,7 @@
   "issues_url": "https://github.com/NetworkBytes/puppet-winconfig/issues",
   "description": "Configure Windows Server 2008/2012 Settings\n    includes UAC, IE ESC, Remote Desktop, Proxy Settings, Search Domains and more...",
   "dependencies": [
-    {"name":"puppetlabs/registry","version_requirement":"1.0.0"},
-    {"name":"joshcooper/powershell","version_requirement":"0.0.6"}
+    {"name":"puppetlabs/registry","version_requirement":">=1.0.0"},
+    {"name":"puppetlabs/powershell","version_requirement":">=0.0.6"}
   ]
 }

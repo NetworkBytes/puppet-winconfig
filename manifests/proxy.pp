@@ -1,39 +1,51 @@
 #Windows Proxy Settings
 define winconfig::proxy (
-  $ensure,
-  $proxyserver=UNDEF,
-  $proxyoverride=UNDEF,
+  $ensure=undef,
+  $proxyserver=undef,
+  $proxyoverride=undef,
+  $proxysettingsperuser="0",
 ){
-  include winconfig::params
-  case $ensure {
-    'present','enabled': { 
-	  $proxy_data = 1 
-	  registry::value{'ProxyServer':
-        key   => 'hklm\Software\Microsoft\Windows\CurrentVersion\Internet Settings',
-        value => 'ProxyServer',
-        type  => 'dword',
-        data  => $proxyserver
+   include winconfig::params
+
+
+   $regbase   = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings'
+
+   Registry_value {
+      ensure => present,
+      type   => string,
+   }
+
+   
+   case $ensure {
+      'present','enabled': 
+      {
+         $proxy_enable = 1
+
+
+         registry_value { "$regbase\\ProxyServer":   data => "$proxyserver"}
+         registry_value { "$regbase\\ProxyOverride": data => "$proxyoverride"}
+
+         registry_value { "32:$regbase\\ProxyServer":  data => "$proxyserver"}
+         registry_value { "32:$regbase\\ProxyOverride": data => "$proxyoverride"}
+
+         $policy = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxySettingsPerUser"
+         registry_value { "$policy": type => dword, data => "0"}
+         registry_value { "32:$policy": type => dword, data => "0"}
+
       }
-      registry::value{'ProxyOverride':
-        key   => 'hklm\Software\Microsoft\Windows\CurrentVersion\Internet Settings',
-        value => 'ProxyOverride',
-        type  => 'dword',
-        data  => $proxyoverride,
+
+      'absent','disabled': 
+      {
+         $proxy_enable = 0 
       }
-      registry::value{'ProxyPerUserSettings':
-        key   => 'hklm\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings',
-        value => 'ProxySettingsPerUser',
-        type  => 'dword',
-        data  => 0
-      }
-	}
-	'absent','disabled': { $proxy_data = 0 }
-    default: { fail('You must specify ensure status...') }
-  }
-  registry::value{'ProxyEnable':
-    key   => 'hklm\Software\Microsoft\Windows\CurrentVersion\Internet Settings',
-    value => 'ProxyEnable',
-    type  => 'dword',
-    data  => $proxy_data,
-  }
-}
+      default: { fail('You must specify ensure status...') }
+
+
+
+      registry_value { "$regbase\\ProxyEnable":  type => dword, data => "$proxy_enable"}
+      registry_value { "32:$regbase\\ProxyEnable": type => dword, data => "$proxy_enable"}
+
+
+   }
+
+} 

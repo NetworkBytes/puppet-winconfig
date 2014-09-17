@@ -1,4 +1,15 @@
 #User Access Control management
+
+#class winconfig::uac (
+#  $ensure = "disabled",
+#) {
+#  
+#  winconfig::uac_define{ "$name" :
+#    ensure => $ensure,
+#  }
+#
+#}
+
 define winconfig::uac (
   $ensure,
 ) {
