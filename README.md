@@ -61,7 +61,8 @@ You can use *present* or *enabled* to "turn on" services for most of the resourc
 
   **Parameters**
 
-	ensure        => present                  # Enable or disable proxy
-	proxyserver   => example.com:8080         # Proxy server URL
-	proxyoverride => server1.com,server2.com  # Comma-Separated list of domains to bypass proxy
+	ensure               => present                  # Enable or disable proxy
+	proxyserver          => example.com:8080         # Proxy server URL
+	proxyoverride        => server1.com,server2.com  # Comma-Separated list of domains to bypass proxy
+	proxysettingsperuser => 0                        # Configure proxy setting per user or for all users
 
