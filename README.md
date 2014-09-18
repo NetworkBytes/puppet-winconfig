@@ -29,6 +29,12 @@ You can use *present* or *enabled* to "turn on" services for most of the resourc
   
 	ensure => disabled  # Enable or disable UAC
 
+#### winconfig::hibernate ####
+
+  **Parameters**
+  
+	ensure => disabled  # Enable or disable hibernation
+
 #### winconfig::esc ####
 
   **Parameters**
