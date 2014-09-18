@@ -1,4 +1,3 @@
-#User Access Control management
 
 define winconfig::hibernate (
   $ensure,
