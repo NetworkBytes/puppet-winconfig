@@ -5,12 +5,15 @@ The module will provide parameter-based configuration for managing the state of 
 
 ### Available Resources
 
-    winconfig::snmp          - Manage SNMP service and settings
-    winconfig::uac           - Manage User Account Control settings
-	winconfig::esc			 - Manage Internet Explorer Enhanced Security Configuration
-	winconfig::rdp			 - Manage RDP services
+	winconfig::dtc		- Manage the Distributed Transaction Coordinator
+	winconfig::snmp		- Manage SNMP service and settings
+	winconfig::uac		- Manage User Account Control settings
+	winconfig::hibernate	- Manage systems hibernation settings
+	winconfig::esc		- Manage Internet Explorer Enhanced Security Configuration
+	winconfig::rdp		- Manage RDP services
 	winconfig::proxy         - Manage proxy server settings
 	winconfig::searchdomains - Add DNS search domains
+	winconfig::smb_security_signature	- Manage smb security signature
 
 ### Dependencies
 
@@ -22,6 +25,20 @@ This resource type required the Puppet Labs supported `registry` module as well 
 ### Usage ###
 
 You can use *present* or *enabled* to "turn on" services for most of the resources listed above.  You can use *absent* or *disabled* to "turn them off".  Check the code for use cases.
+
+#### winconfig::dtc ####
+
+  **Parameters**
+  
+        AllowOnlySecureRpcCalls => "0"    #  
+        TurnOffRpcSecurity 	=> "1"
+        NetworkDtcAccess 	=> "1"    #  
+        NetworkDtcAccessAdmin 	=> "1"    #  
+        NetworkDtcAccessClients => "1"    #  
+        NetworkDtcAccessInbound => "1"    #  
+        NetworkDtcAccessOutbound => "1"    #  
+        NetworkDtcAccessTransactions => "1"    #  
+        XaTransactions 		=> "1"    #  
 
 #### winconfig::uac ####
 
@@ -56,6 +73,12 @@ You can use *present* or *enabled* to "turn on" services for most of the resourc
 	location    => 'Inside the house'       # Location information
 	community   => 'abcxyztotallysecure'    # Community String
 	destination => 'trap.server.com'        # SNMP Trap Destination Server
+
+#### winconfig::smb_security_signature ####
+
+  **Parameters**
+
+	ensure => enabled # Enable or disable smb security signature
 
 #### winconfig::searchdomains ####
 
