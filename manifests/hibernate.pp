@@ -8,7 +8,6 @@ define winconfig::hibernate (
     'present','enabled': { $data = 1 }
     'absent','disabled': { $data = 0 }
     default: { fail('You must specify ensure status...') }
-    }
   }
 
 

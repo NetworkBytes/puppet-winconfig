@@ -10,12 +10,6 @@ define winconfig::proxy (
 
    $regbase   = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings'
 
-   Registry_value {
-      ensure => present,
-      type   => string,
-   }
-
-   
    case $ensure {
       'present','enabled': 
       {
@@ -39,13 +33,10 @@ define winconfig::proxy (
          $proxy_enable = 0 
       }
       default: { fail('You must specify ensure status...') }
-
-
-
-      registry_value { "$regbase\\ProxyEnable":  type => dword, data => "$proxy_enable"}
-      registry_value { "32:$regbase\\ProxyEnable": type => dword, data => "$proxy_enable"}
-
-
    }
+
+
+   registry_value {   "$regbase\\ProxyEnable": type => dword, data => "$proxy_enable"}
+   registry_value {"32:$regbase\\ProxyEnable": type => dword, data => "$proxy_enable"}
 
 } 

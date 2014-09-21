@@ -25,5 +25,6 @@ define winconfig::ipv6 (
   }
   reboot {'ipv6':
     subscribe => Registry::Value['ipv6'],
+    apply  => finished,
   }
 }

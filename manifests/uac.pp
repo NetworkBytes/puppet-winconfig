@@ -1,24 +1,15 @@
-#User Access Control management
-
-#class winconfig::uac (
-#  $ensure = "disabled",
-#) {
-#  
-#  winconfig::uac_define{ "$name" :
-#    ensure => $ensure,
-#  }
-#
-#}
 
 define winconfig::uac (
   $ensure,
 ) {
   include winconfig::params
+
   case $ensure {
     'present','enabled': { $uac_data = 1 }
     'absent','disabled': { $uac_data = 0 }
     default: { fail('You must specify ensure status...') }
-    }
+  }
+
   registry::value{'UAC':
     key    => 'hklm\software\Microsoft\Windows\CurrentVersion\Policies\System',
     value  => 'EnableLUA',
@@ -27,5 +18,6 @@ define winconfig::uac (
   }
   reboot { 'UAC':
     subscribe => Registry::Value['UAC'],
+    apply  => finished,
   }
 }

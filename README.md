@@ -14,6 +14,7 @@ The module will provide parameter-based configuration for managing the state of 
 	winconfig::proxy         - Manage proxy server settings
 	winconfig::searchdomains - Add DNS search domains
 	winconfig::smb_security_signature	- Manage smb security signature
+	winconfig::feature	- Manage smb security signature
 
 ### Dependencies
 
@@ -94,4 +95,14 @@ You can use *present* or *enabled* to "turn on" services for most of the resourc
 	proxyserver          => example.com:8080         # Proxy server URL
 	proxyoverride        => server1.com,server2.com  # Comma-Separated list of domains to bypass proxy
 	proxysettingsperuser => 0                        # Configure proxy setting per user or for all users
+
+#### winconfig::feature ####
+
+  **Parameters**
+
+	ensure               => present                  # Install or Uninstall
+	feature_name         => MSMQ         # 
+	installmanagementtools        => 0
+	installsubfeatures    => 0                        # 
+	retart                 => 0                        # 
 
