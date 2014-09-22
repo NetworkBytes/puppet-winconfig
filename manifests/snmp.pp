@@ -1,59 +1,49 @@
 #Windows SNMP management
 define winconfig::snmp (
   $ensure,
-  $contact,
-  $location,
+  $contact = "",
+  $location= "",
   $community,
-  $destination,
+  $permittedmanagers
 ) {
-  if versioncmp($::operatingsystemrelease, 6.1) < 0 {
-    fail('Windows 2003 is not yet supported...')
-  } elsif $ensure == 'present' {
-      exec { 'Add SNMP Service':
-        command  => 'Import-Module ServerManager; Add-WindowsFeature SNMP-Service',
-        onlyif   => 'Import-Module ServerManager; if ((Get-WindowsFeature SNMP-Service).Installed) { exit 1 }',
-        path     => $::path,
-        provider => 'powershell',
-      }
-  }
-    else {
-      exec {'Remove SNMP Service':
-        command  => 'Import-Module ServerManager; Remove-WindowsFeature SNMP-Service',
-        unless   => 'Import-Module ServerManager; if ((Get-WindowsFeature SNMP-Service).Installed { exit 1 }',
-        path     => $::path,
-        provider => 'powershell',
-      }
-  }
 
-  registry::value{'SNMP Community String':
-    key   => 'hklm\system\CurrentControlSet\Services\SNMP\Parameters\Valid Communities',
-    value => $community,
-    type  => 'dword',
-    data  => 4,
-  }
+  include winconfig::params
+  validate_re($ensure, '^(present|enabled|absent|disabled)$', 'valid values for ensure are \'present\', \'enabled\', \'absent\', \'disabled\'')
+  $_install_ensure = $ensure ? { /(present|enabled)/ => 'present', /(absent|disabled)/ => 'absent'}
 
-  registry::value{'SNMP Trap Destination':
-    key   => "hklm\\system\\CurrentControlSet\\Services\\SNMP\\Parameters\\TrapConfiguration\\${community}",
-    value => '1',
-    data  => $destination,
-  }
+  
+  $perm_write=8
+  $perm_read=4
+  $perm_none=1
 
-  registry::value{'syscontact':
-    key   => 'hklm\system\CurrentControlSet\Services\SNMP\Parameters\RFC1156Agent',
-    value => 'sysContact',
-    data  => $contact,
-  }
+  winconfig::feature {"SNMP-Services": ensure => "$_install_ensure"}
 
-  registry::value{'syslocation':
-    key   => 'hklm\system\CurrentControlSet\Services\SNMP\Parameters\RFC1156Agent',
-    value => 'sysLocation',
-    data  => $location,
-  }
+  $regbase   = 'HKLM\system\CurrentControlSet\Services\SNMP\Parameters'
 
-  #service
+  registry_value { "$regbase\\ValidCommunities\\$community": type => dword, data => "$perm_read"}
+
+  # Contacts
+  registry_value { "$regbase\\RFC1156Agent\\sysContact":  data => "$contact"}
+  registry_value { "$regbase\\RFC1156Agent\\sysLocation": data => "$location"}
+  registry_value { "$regbase\\RFC1156Agent\\sysServices": type => dword,  data => "79"} #all services
+
+  #TODO remove any other permitted managers and implement array
+  registry_value { "$regbase\\PermittedManagers\\1": data => "$permittedmanagers"}
+
+
+  $regkeys = [
+    Registry_value ["$regbase\\ValidCommunities\\$community"],
+    Registry_value ["$regbase\\RFC1156Agent\\sysContact"],
+    Registry_value ["$regbase\\RFC1156Agent\\sysLocation"],
+    Registry_value ["$regbase\\RFC1156Agent\\sysServices"],
+    Registry_value ["$regbase\\PermittedManagers\\1"],
+  ]
+
   service {'SNMP':
     ensure => running,
     enable => true,
+    subscribe => [$regkeys, Winconfig::Feature ["SNMP-Services"]]
   }
 
 }
+

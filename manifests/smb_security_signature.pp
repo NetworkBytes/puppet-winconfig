@@ -2,12 +2,11 @@
 define winconfig::smb_security_signature (
   $ensure,
 ) {
+
   include winconfig::params
-  case $ensure {
-    'present','enabled': { $data = 1 }
-    'absent','disabled': { $data = 0 }
-    default: { fail('You must specify ensure status...') }
-  }
+  validate_re($ensure, '^(present|enabled|absent|disabled)$', 'valid values for ensure are \'present\', \'enabled\', \'absent\', \'disabled\'')
+
+  $data = $ensure ? { /(present|enabled)/ => 1, /(absent|disabled)/ => 0}
 
   $regbase   = 'HKLM\System\CurrentControlSet\Services\LanmanWorkstation\Parameters'
   registry_value { "$regbase\\RequireSecuritySignature":  type => dword, data => "$data"}

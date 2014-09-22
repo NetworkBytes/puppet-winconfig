@@ -4,20 +4,16 @@ define winconfig::uac (
 ) {
   include winconfig::params
 
-  case $ensure {
-    'present','enabled': { $uac_data = 1 }
-    'absent','disabled': { $uac_data = 0 }
-    default: { fail('You must specify ensure status...') }
-  }
+  validate_re($ensure, '^(present|enabled|absent|disabled)$', 'valid values for ensure are \'present\', \'enabled\', \'absent\', \'disabled\'')
+  
+  $data = $ensure ? { /(present|enabled)/ => 1, /(absent|disabled)/ => 0}
 
-  registry::value{'UAC':
-    key    => 'hklm\software\Microsoft\Windows\CurrentVersion\Policies\System',
-    value  => 'EnableLUA',
-    type   => 'dword',
-    data   => $uac_data,
-  }
-  reboot { 'UAC':
-    subscribe => Registry::Value['UAC'],
+
+  $regbase   = 'HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+  registry_value { "$regbase\\EnableLUA":  type => dword, data => "$data"}
+
+  reboot { 'reboot_after_uac':
+    subscribe => Registry::Value["$regbase\\EnableLUA"],
     apply  => finished,
   }
 }

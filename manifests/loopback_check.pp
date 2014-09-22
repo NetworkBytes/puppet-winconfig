@@ -2,16 +2,13 @@
 define winconfig::loopback_check (
   $ensure,
 ) {
+
   include winconfig::params
+  validate_re($ensure, '^(present|enabled|absent|disabled)$', 'valid values for ensure are \'present\', \'enabled\', \'absent\', \'disabled\'')
 
-  case $ensure {
-    'present','enabled': { $data = 1 }
-    'absent','disabled': { $data = 0 }
-    default: { fail('You must specify ensure status...') }
-  }
+  $data = $ensure ? { /(present|enabled)/ => 1, /(absent|disabled)/ => 0}
 
-
-   $regbase   = 'HKLM\System\CurrentControlSet\Control\Lsa'
-   registry_value { "$regbase\\DisableLoopbackCheck": type => dword, data => "$data"}
+  $regbase   = 'HKLM\System\CurrentControlSet\Control\Lsa'
+  registry_value { "$regbase\\DisableLoopbackCheck": type => dword, data => "$data"}
 
 }

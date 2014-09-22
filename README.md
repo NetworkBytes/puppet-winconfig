@@ -74,6 +74,7 @@ You can use *present* or *enabled* to "turn on" services for most of the resourc
 	location    => 'Inside the house'       # Location information
 	community   => 'abcxyztotallysecure'    # Community String
 	destination => 'trap.server.com'        # SNMP Trap Destination Server
+	permittedmanagers => '1.1.1.1'          # IP or host name of permitted managers
 
 #### winconfig::smb_security_signature ####
 
