@@ -1,5 +1,4 @@
-
-define winconfig::esc(
+class winconfig::esc(
   $ensure,
 ) {
 
